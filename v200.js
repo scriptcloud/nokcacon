@@ -1,11 +1,9 @@
 // ==UserScript==
-// @name         녹카콘
+// @name         nokcacon_test
 // @namespace    https://github.com/scriptcloud/
-// @version      1.5.3
-// @description  녹두로 카페 전용 댓글 이모티콘 확장프로그램 녹ー카콘. 네이버 카페 댓글에 이모티콘 입력기능 추가
+// @version      0
+// @description  test
 // @author       pperero
-// @updateURL    https://gist.github.com/scriptcloud/6bd15f131566fdc15aaef6b0f7914b9d/raw/nokcacon.user.js
-// @downloadURL  https://gist.github.com/scriptcloud/6bd15f131566fdc15aaef6b0f7914b9d/raw/nokcacon.user.js
 // @match        https://cafe.naver.com/ArticleRead.nhn*
 // @match        https://cafe.naver.com/ca-fe/ArticleRead.nhn*
 // @match        https://cafe.naver.com/ca-fe/cafes*
@@ -13,10 +11,12 @@
 // @icon         https://pub-945ee597288a43329a299345ecb0188d.r2.dev/eggSungo.png
 // @grant        GM_addStyle
 // @grant        GM_notification
-// @run-at       document-start
 // @require      https://code.jquery.com/jquery-2.1.4.min.js
-// @require      https://update.greasyfork.org/scripts/47911/275337/Font-awesome%20AllJs.js
+// @require      https://pub-945ee597288a43329a299345ecb0188d.r2.dev/all.min.js
 // ==/UserScript==
+
+/* comment remover regex */
+/*                 \/\*[\s\S]*?\*\/|(?<=[^:])\/\/.*|^\/\/.*              */
 
 let source = "https://pub-945ee597288a43329a299345ecb0188d.r2.dev", query = "";
 
@@ -586,7 +586,9 @@ class commentArea {
         console.log("tried flagging");
         //file input element에 작업 후 fileinput(element)반환
         let flagger = inputBtn.onclick;
+        console.log("outer_flagger: ", flagger);
         inputBtn.onclick = (e)=>{
+            console.log("inner_flagger: ", flagger);
             flagger(e);
             e.preventDefault();
         }
