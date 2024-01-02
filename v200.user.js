@@ -566,6 +566,7 @@ class commentArea {
         //iconArea.appendChild(loadIcon);
 
         this.fileInput = await waitForElm("input.blind", this.area)
+        console.log("fileInput in CommentArea.init(): ", this.fileInput);
         //console.log("inputBtn: ", fileInput);
         this.flagFileUpload();
     }
@@ -582,8 +583,8 @@ class commentArea {
 
     flagFileUpload () { //:HTMLElement
         const inputBtn = this.fileInput;
+        console.log("tried flagging: fileInput = ", inputBtn);
 
-        console.log("tried flagging");
         //file input element에 작업 후 fileinput(element)반환
         let flagger = inputBtn.onclick;
         console.log("outer_flagger: ", flagger);
