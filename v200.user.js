@@ -766,7 +766,7 @@ const observer = new MutationObserver(function (mutations) {
     for (const mutation of mutations) { for (const node of mutation.addedNodes) {
         if (node.nodeType === Node.ELEMENT_NODE) {
             console.log("new element: ", node);
-            if(node.classList.contains("CommentItem--reply")) {
+            if(node.matches("div.CommentWriter")) {
                 console.log("new commentWriter added: ", node.firstChild);
                 const writer = new commentArea(node.firstChild, mainScreen);
                 writer.init();
@@ -774,8 +774,10 @@ const observer = new MutationObserver(function (mutations) {
         }
     }}
 });
+//다소 overhead를 발생시키더라도 subtree까지 탐색해서 첫번째 commentWriter를 포함시켜 주었다.
 waitForElm("div.CommentBox").then(commentBox => {
     observer.observe(commentBox, {
-        childList: true
+        childList: true,
+        subtree: true
     });
 });
