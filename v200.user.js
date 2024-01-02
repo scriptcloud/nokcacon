@@ -774,7 +774,7 @@ if (isUrlInDomain(parent.location.href, domain)) {
             for (const mutation of mutations) { for (const node of mutation.addedNodes) {
                 if (node.nodeType === Node.ELEMENT_NODE) {
                     console.log("new element: ", node);
-                    if(node.classList.contains("CommentItem--reply")) {
+                    if($(node).hasClass("CommentItem--reply")) {
                         console.log("new commentWriter added: ", node.firstChild);
                         const writer = new commentArea(node.firstChild, mainScreen);
                         writer.init();
