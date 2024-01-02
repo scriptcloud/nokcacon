@@ -774,7 +774,8 @@ const observer = new MutationObserver(function (mutations) {
         }
     }}
 });
-const commentBox = document.querySelector("div.CommentBox")
-observer.observe(commentBox, {
-    childList: true
+waitForElm("div.CommentBox").then(commentBox => {
+    observer.observe(commentBox, {
+        childList: true
+    });
 });
