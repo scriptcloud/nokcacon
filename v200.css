@@ -1,0 +1,180 @@
+.nokcacon {
+    background-image: url("${source}/sungo/egg.png");
+    background-size: 18px 18px;
+
+    display: inline-block;
+    margin-left: 16px;
+    transition: 0.2s;
+
+    width: 18px;
+    height: 18px;
+
+    &:hover {
+        background-image: url("${source}/sungo/half_egg.png");
+        opacity: 0.7;
+    }
+}
+.nokcacon.active {
+    background-image: url("${source}/sungo/bird.png");
+}
+
+.mainScreen {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 10;
+
+    transition: left top 0.2s ease-in-out;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+    width: 458px;
+    height: 385px;
+    border: 1px solid #9b9b9b;
+    background: #fff;
+}
+
+.menuView {
+    flex-shrink: 0;
+    height: 50px;
+    width: 100%;
+
+    overflow: hidden;
+    }
+
+.menuList {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    white-space: nowrap;
+}
+.menuBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 60px;
+    flex-shrink: 0;
+    height: 100%;
+
+    cursor: pointer;
+    font-size: 10px;
+    border-right: 1px solid #d1d3d8;
+    box-shadow: 0 -3px 2px -2px #d1d3d8 inset;
+}
+.menuBtn::last {
+    border-right: none;
+}
+.menuBtn.selected {
+    box-shadow: none;
+}
+.menuBtn > img {
+    width: 45px;
+}
+
+
+
+.conView {
+    flex-grow: 1;
+    width: 100%;
+    margin-top: 5px;
+
+    overflow: overlay;
+    overflow-x: hidden;
+    background: repeating-linear-gradient(45deg, white, white 8px, #eee 10px);
+}
+.conList {
+    display: none;
+    width: 100%;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+
+    text-align: center;
+}
+.conList.selected {
+    display: grid;
+}
+
+.conBtn {
+    width: 100%;
+    position: relative;
+    cursor: pointer;
+    border: 1px solid white;
+    text-align: left;
+}
+.conBtn:hover > img {
+    width: 103%;
+    transition: 0.1s;
+}
+.conBtn::after {
+    display: block;
+    content: "";
+    padding-bottom: 100%;
+}
+.conBtn > img{
+    position: absolute;
+    width: 100%;
+    height: auto;
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.emptyScreen {
+    position: absolute;
+    inset: 50px 0 0 0;
+    margin: auto;
+
+    width: 150px;
+    height: 50px;
+}
+
+.article_end {
+    width: 100%;
+    display: none;
+    justify-content: center;
+    margin-top: 50px;
+
+    &.enabled {
+        display: flex;
+    }
+}
+
+.recommend-button {
+    display: inline-block;
+    height: 34px;
+    padding: 6px 8px;
+    box-sizing: border-box;
+
+
+    font-size: 14px;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    font-family: 'Nanum Gothic', sans-serif;
+
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1px solid #d9534f;
+    color: #d9534f;
+    background-color: transparent;
+
+    &:hover, &.on {
+        color: #ffffff;
+        background-color: #d9534f;
+        border-color: #d9534f;
+
+        .text, .count {
+            color: #ffffff;
+        }
+    }
+}
+
+.recommend-toggle {
+    margin-right: 10px;
+    display: inline-block;
+}
