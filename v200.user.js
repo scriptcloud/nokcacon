@@ -582,7 +582,7 @@ class commentArea {
 
 
     flagFileUpload () { //:HTMLElement
-        const inputBtn = this.fileInput;
+        const inputBtn = this.fileInput; 
         console.log("tried flagging: fileInput = ", inputBtn);
 
         //file input element에 작업 후 fileinput(element)반환
@@ -754,37 +754,27 @@ if (window.top === window.self) {
 }
 //window.addEventListener("beforeunload", () => {});
 let domain = "cafe.naver.com/nokduro";
-
-if (isUrlInDomain(parent.location.href, domain)) {
-    //추천버튼 활성화
-    Recommend();
-
-    const mainScreen = new MainScreen; ///콘 메뉴 추가
-
-    //create commentArea object for main commentWriter
-    waitForElm("div.CommentWriter").then(async writerbox => {
-        const writer = new commentArea(writerbox, mainScreen);
-        await writer.init();
-        //동기적 처리를 위해 로직을 constructor에서 async init()으로 이동
-        //콜백을 async로 설정하면 내부에서 await으로 처리 가능
-    }).then(async ()=>{
-        const commentList = await waitForElm("ul.comment_list");
-        //create commentArea object for new commentWriters
-        const observer = new MutationObserver(function (mutations) {
-            for (const mutation of mutations) { for (const node of mutation.addedNodes) {
-                if (node.nodeType === Node.ELEMENT_NODE) {
-                    console.log("new element: ", node);
-                    if(node.classList.contains("CommentItem--reply")) {
-                        console.log("new commentWriter added: ", node.firstChild);
-                        const writer = new commentArea(node.firstChild, mainScreen);
-                        writer.init();
-                    }
-                }
-            }}
-        });
-        observer.observe(commentList, {
-            childList: true
-        });
-    });
-
+if (!isUrlInDomain(parent.location.href, domain)) {
+    console.log("not in domain");
+    return;
 }
+Recommend(); //추천버튼 활성화
+const mainScreen = new MainScreen; ///콘 메뉴 추가
+
+//commentWriters마다 commentArea 동적 생성
+const observer = new MutationObserver(function (mutations) {
+    for (const mutation of mutations) { for (const node of mutation.addedNodes) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            console.log("new element: ", node);
+            if(node.classList.contains("CommentItem--reply")) {
+                console.log("new commentWriter added: ", node.firstChild);
+                const writer = new commentArea(node.firstChild, mainScreen);
+                writer.init();
+            }
+        }
+    }}
+});
+const commentBox = document.querySelector("div.CommentBox")
+observer.observe(commentBox, {
+    childList: true
+});
