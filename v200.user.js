@@ -23,9 +23,6 @@ let source = "https://pub-945ee597288a43329a299345ecb0188d.r2.dev", query = "";
 GM_addStyle(`
 
     .nokcacon {
-        background-image: url("${source}/sungo/egg.png");
-        background-size: 18px 18px;
-
         display: inline-block;
         vertical-align: top;
         margin-left: 16px;
@@ -34,12 +31,8 @@ GM_addStyle(`
         height: 18px;
 
         &:hover {
-            background-image: url("${source}/sungo/half_egg.png");
             opacity: 0.7;
         }
-    }
-    .nokcacon.active {
-        background-image: url("${source}/sungo/bird.png");
     }
 
     .mainScreen {
@@ -543,23 +536,30 @@ class commentArea {
 
         //event delegation: nokcacon click
         $(this.area).on("click", ".nokcacon", (e)=> { //화살표함수이므로 this는 commentArea
-
             const currentNcc = mainScreen.currentWriter?.nokcacon; //?.: optional 
-            //console.log("nowNokcacon: ", currentNcc, "this.Nokcacon", this.Nokcacon);
+            if(!currentNcc) mainScreen.currentWriter = this; //첫 클릭시 currentWriter 초기화
 
-            // nokcacon.active에 따른 분기
-            if ($(currentNcc).hasClass("active")) { //현재 active이면
-                $(currentNcc).removeClass("active");
-                mainScreen.hide();
-            } else { //현재 active가 아니면
-                $(e.currentTarget).addClass("active"); //어쨌든 클릭된 타겟을 active로 바꿈
-                mainScreen.show();
-            }
-
-            //currentWriter 변화에 따른 분기
-            if (!(currentNcc === this.Nokcacon)) { //현재 writeSpace가 클릭한 writeSpace와 다르면
-                mainScreen.currentWriter = this;
+            // nokcacon.active와 writeSpace 변화에 따른 4분기
+            // nokcacon을 객체화해서 정적 메소드로 utility function 제공
+            // active 설정과 src 변경을 한데 묶어 nokcacon.activate/inactivate()로 바꿀것
+            if (currentNcc === this.nokcacon) { //동일 녹카콘 다시 클릭시(첫 클릭시도 포함)
+                $(currentNcc).toggleClass("active");
+                if ($(currentNcc).hasClass("active")) { //현재 active이면
+                    $(currentNcc).firstChild().attr("src", `${source}/sungo/bird.png${query}`); //bird.png
+                    mainScreen.hide();
+                } else { //현재 active가 아니면
+                    $(currentNcc).firstChild().attr("src", `${source}/sungo/bird.png${query}`); //bird.png
+                    mainScreen.show();
+                }
+            } else { //대댓의 녹카콘 클릭시
                 mainScreen.moveto(this.screenAnchor); //magnet
+                mainScreen.currentWriter = this;
+                if (!$(currentNcc).hasClass("active"))  mainScreen.show();
+
+                $(currentNcc).removeClass("active");
+                $(currentNcc).firstChild().attr("src", `${source}/sungo/egg.png${query}`); //bird.png
+                $(e.currentTarget).addClass("active");
+                $(e.currentTarget).firstChild().attr("src", `${source}/sungo/bird.png${query}`); //겹치긴함
             }
         });
     }
@@ -607,12 +607,18 @@ class commentArea {
         nccButton.className = "nokcacon";
         nccButton.title = "녹카콘";
 
-        /*
         const imageElement = createCorsElement("img");
-        imageElement.src = `${source}/sungo/egg.png${query}`;
-        nccButton.appendChild(imageElement);
-        */
+        //imageElement.src = `${source}/sungo/egg.png${query}`;
+        //default image: egg.png, hover image: half_egg.png, change to bird.png when selected and if unselected it should get back to egg.png
+        $(nccButton).on('mouseenter', function() { //hover
+            if (this.hasClass("active")) { return; } //active이면 무시하고 bird.png
+            $(imageElement).attr("src", `${source}/sungo/half_egg.png${query}`);
+        }).on('mouseleave', function() { //idle
+            if (this.hasClass("active")) { return; } //active이면 무시하고 bird.png
+            $(imageElement).attr("src", `${source}/sungo/egg.png${query}`);
+        });
 
+        nccButton.appendChild(imageElement);
         return nccButton;
     }
     
@@ -665,7 +671,6 @@ class MainScreen {
         this.currentWriter.uploadFile(file);
     }
 
-
     //screen position left bottom (main commentWriter iconbox)
     moveto(element) { //:jQuery element
         $(this.screen).css({
@@ -690,6 +695,7 @@ class MainScreen {
         const nccSetIdle = ()=> {
             if (this.currentWriter) {
                 $(this.currentWriter.nokcacon).removeClass("active");
+                $(this.currentWriter.nokcacon.firstChild).attr("src", `${source}/sungo/egg.png${query}`);
             }
         };
         adIframe.onload = ()=> {
