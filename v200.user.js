@@ -671,6 +671,10 @@ class MainScreen {
 
             const file = new File([blob], `con.${extension}`, { type: `image/${extension}` });
             this.uploadOn(file); //this 바인딩 고려
+
+            //escape sungo mode - 스크린을 hide하는 동시에 
+            //현재 writer의 nokcacon을 unactive로 만들고
+            //sungo icon을 egg.png로 바꾸는 함수 필요
             $(this.screen).hide();
         });
     }
