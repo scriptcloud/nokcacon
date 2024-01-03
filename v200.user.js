@@ -214,14 +214,18 @@ function createCorsElement(type) {
 }
 
 function waitForElm(selector, where = document.body) {
+    //you need to get the selector in the form "where > selector"
+    //if you want to search from inside element subtree
     return new Promise(resolve => {
-        if (document.querySelector(selector)) {
-            return resolve(document.querySelector(selector));
+        const localElem = $(where).find(selector)[0];
+        if (localElem) {
+            return resolve(localElem);
         }
         const observer = new MutationObserver(mutations => {
-            if (document.querySelector(selector)) {
+            const localElement = $(where).find(selector)[0];
+            if (localElement) {
                 observer.disconnect();
-                resolve(document.querySelector(selector));
+                resolve(localElement);
             }
         });
         observer.observe(where, {
