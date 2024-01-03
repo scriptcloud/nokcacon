@@ -35,6 +35,11 @@ GM_addStyle(`
         }
     }
 
+    .nokcacon > img {
+        width: 100%;
+        height: 100%;
+    }
+
     .mainScreen {
         position: absolute;
         top: 100%;
@@ -543,13 +548,14 @@ class commentArea {
             // nokcacon을 객체화해서 정적 메소드로 utility function 제공
             // active 설정과 src 변경을 한데 묶어 nokcacon.activate/inactivate()로 바꿀것
             if (currentNcc === this.nokcacon) { //동일 녹카콘 다시 클릭시(첫 클릭시도 포함)
-                $(currentNcc).toggleClass("active");
                 if ($(currentNcc).hasClass("active")) { //현재 active이면
-                    $(currentNcc).firstChild().attr("src", `${source}/sungo/bird.png${query}`); //bird.png
                     mainScreen.hide();
+                    $(currentNcc).removeClass("active");
+                    $(currentNcc).children().attr("src", `${source}/sungo/egg.png${query}`); //bird.png
                 } else { //현재 active가 아니면
-                    $(currentNcc).firstChild().attr("src", `${source}/sungo/bird.png${query}`); //bird.png
                     mainScreen.show();
+                    $(currentNcc).addClass("active");
+                    $(currentNcc).children().attr("src", `${source}/sungo/bird.png${query}`); //bird.png
                 }
             } else { //대댓의 녹카콘 클릭시
                 mainScreen.moveto(this.screenAnchor); //magnet
@@ -557,9 +563,9 @@ class commentArea {
                 if (!$(currentNcc).hasClass("active"))  mainScreen.show();
 
                 $(currentNcc).removeClass("active");
-                $(currentNcc).firstChild().attr("src", `${source}/sungo/egg.png${query}`); //bird.png
+                $(currentNcc).children().attr("src", `${source}/sungo/egg.png${query}`); //bird.png
                 $(e.currentTarget).addClass("active");
-                $(e.currentTarget).firstChild().attr("src", `${source}/sungo/bird.png${query}`); //겹치긴함
+                $(e.currentTarget).children().attr("src", `${source}/sungo/bird.png${query}`);
             }
         });
     }
@@ -608,13 +614,15 @@ class commentArea {
         nccButton.title = "녹카콘";
 
         const imageElement = createCorsElement("img");
+        imageElement.src = `${source}/sungo/egg.png${query}`;
         //imageElement.src = `${source}/sungo/egg.png${query}`;
         //default image: egg.png, hover image: half_egg.png, change to bird.png when selected and if unselected it should get back to egg.png
-        $(nccButton).on('mouseenter', function() { //hover
-            if (this.hasClass("active")) { return; } //active이면 무시하고 bird.png
+        //hover behavior
+        $(nccButton).on('mouseenter', function() { //여기서의 this는 hover된 element인 nccButton을 의미함
+            if ($(this).hasClass("active")) { return; } //active이면 무시하고 bird.png
             $(imageElement).attr("src", `${source}/sungo/half_egg.png${query}`);
         }).on('mouseleave', function() { //idle
-            if (this.hasClass("active")) { return; } //active이면 무시하고 bird.png
+            if ($(this).hasClass("active")) { return; } //active이면 무시하고 bird.png
             $(imageElement).attr("src", `${source}/sungo/egg.png${query}`);
         });
 
@@ -692,38 +700,38 @@ class MainScreen {
     async hideOnClickOutside() {
         //click advertisement iframe
         const adIframe = await waitForElm("#cafe_sdk_tgtLREC");
-        const nccSetIdle = ()=> {
-            if (this.currentWriter) {
+        const idleThenHide = (event)=> {
+            if (this.currentWriter && !$(event.target).hasClass("nokcacon")) { //녹카콘 클릭 로직과 겹치지 않게끔
+                //console.log("idelThenHide activated");
                 $(this.currentWriter.nokcacon).removeClass("active");
                 $(this.currentWriter.nokcacon.firstChild).attr("src", `${source}/sungo/egg.png${query}`);
+                //console.log("this: ", this);
+                this.hide(); //this는 lexical context에 따라 mainScreen에 바인딩
             }
         };
+        const self = this;
         adIframe.onload = ()=> {
-            $(adIframe.contentDocument.body).on('mousedown', ()=> {
-                this.hide();
-                nccSetIdle();
+            $(adIframe.contentDocument.body).on('mousedown', (event)=> {
+                idleThenHide(event);
             });
         }
         //click outside of iframe
         const outerDocument = window.parent.document;
-        $(outerDocument).on('mousedown', ()=> {
-            this.hide();
-            nccSetIdle();
+        $(outerDocument).on('mousedown', (event)=> {
+            idleThenHide(event);
         });
         //click in iframe but outside of element
-        $(document).on('click', event => {
+        $(document).on('click', (event) => {
             const click1= event.target.closest(".mainScreen");
             const click2 = event.target.closest("div.CommentWriter");
             if (!click1 && !click2) {
-                this.hide();
-                nccSetIdle();
+                idleThenHide(event);
             }
         });
         //if register button clicked
         const regBtn = document.querySelector(".register_box");
-        $(regBtn).on('click', ()=> {
-            this.hide();
-            nccSetIdle();
+        $(regBtn).on('click', (event) => {
+            idleThenHide(event);
         });
     } 
 }
