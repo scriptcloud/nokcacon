@@ -27,6 +27,7 @@ GM_addStyle(`
         background-size: 18px 18px;
 
         display: inline-block;
+        vertical-align: top;
         margin-left: 16px;
 
         width: 18px;
