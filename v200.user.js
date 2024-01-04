@@ -557,8 +557,8 @@ class commentArea {
                     $(currentNcc).addClass("active");
                     $(currentNcc).children().attr("src", `${source}/sungo/bird.png${query}`); //bird.png
                 }
-            } else { //대댓의 녹카콘 클릭시
-                mainScreen.moveto(this.screenAnchor); //magnet
+            } else { //다른 녹카콘 클릭시
+                //mainScreen.moveto(this.screenAnchor); //magnet <- original location
                 mainScreen.currentWriter = this;
                 if (!$(currentNcc).hasClass("active"))  mainScreen.show();
 
@@ -567,6 +567,7 @@ class commentArea {
                 $(e.currentTarget).addClass("active");
                 $(e.currentTarget).children().attr("src", `${source}/sungo/bird.png${query}`);
             }
+            mainScreen.moveto(this.screenAnchor); //일단 모든 케이스에 대해 적용
         });
     }
 
@@ -594,13 +595,8 @@ class commentArea {
 
     flagFileUpload () { //:HTMLElement
         const inputBtn = this.fileInput;
-        console.log("tried flagging: fileInput = ", inputBtn);
-
-        //file input element에 작업 후 fileinput(element)반환
         let flagger = inputBtn.onclick;
-        console.log("outer_flagger: ", flagger);
         inputBtn.onclick = (e)=>{
-            console.log("inner_flagger: ", flagger);
             flagger(e);
             e.preventDefault();
         }
@@ -676,6 +672,8 @@ class MainScreen {
             //현재 writer의 nokcacon을 unactive로 만들고
             //sungo icon을 egg.png로 바꾸는 함수 필요
             $(this.screen).hide();
+            $(this.currentWriter.nokcacon).removeClass("active");
+            $(this.currentWriter.nokcacon.firstChild).attr("src", `${source}/sungo/egg.png${query}`);
         });
     }
     
