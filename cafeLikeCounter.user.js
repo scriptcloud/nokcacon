@@ -8,7 +8,7 @@
 // @match        https://cafe.naver.com/ArticleList.nhn?search.clubid=31103664&*
 // @match        https://cafe.naver.com/ca-fe/cafes/31103664*
 // @grant        GM_addStyle
-// @run-at       document-start
+// @run-at       document-body
 // @require      https://code.jquery.com/jquery-2.1.4.min.js
 // ==/UserScript==
 
@@ -164,7 +164,7 @@ function LikeShower(where) {
 //// Main Body ////
 ///if (window.location.href === "https://cafe.naver.com/MyCafeIntro.nhn?clubid=31103664" || window.location.href.includes("https://cafe.naver.com/ArticleList.nhn?search.clubid=31103664&")) {
 
-async function pageManager() {
+(async function pageManager() {
   this.observer = undefined;
   this.monitorPageChange = function () {
     console.log("monitoring page change in current tab");
@@ -180,9 +180,8 @@ async function pageManager() {
       this.observer = new MutationObserver(callback);
       this.observer.observe(await target, config);
       console.log("button clicked, observer: ", this.observer);
-    }, 1000);
+    }, 1000); //버튼 클릭 후 글목록 업데이트를 1초간 기다렸다 실행
   };
-
   //execution
   let likeShower;
   if (location.href.includes("https://cafe.naver.com/ca-fe/cafes/31103664/popular")) {
@@ -198,6 +197,4 @@ async function pageManager() {
   }
   likeShower.init();
   likeShower.update();
-}
-
-pageManager();
+})();
