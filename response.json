@@ -1,0 +1,30 @@
+{
+  "userAdultStatus": null,
+  "liveTitle": "스빠룬키 금단현상 ㄷㄷ;;",
+  "channel": {
+    "verifiedMark": false,
+    "channelName": "녹두로로",
+    "channelId": "6e06f5e1907f17eff543abd06cb62891",
+    "channelImageUrl": "https://nng-phinf.pstatic.net/MjAyMzEyMTlfMTc2/MDAxNzAyOTc3NjA0NTc4.Vd9lD67bKMJbZS8aBvyX8KjDqKLCR9zCuhxGilqhSEQg.Pdsam1-hUc0QiCEjOmOm6-bbwHeLXBQ2W_udwZOzyskg.PNG/2.png"
+  },
+  "livePlaybackJson": "{\"meta\":{\"videoId\":\"7668096F742F7BCA4E2076241BEA080696E4\",\"streamSeq\":26446748,\"liveId\":\"4167856\",\"paidLive\":false,\"cdnInfo\":{\"cdnType\":\"GCDN\",\"zeroRating\":false},\"p2p\":false},\"serviceMeta\":{\"contentType\":\"VIDEO\"},\"live\":{\"start\":\"2024-01-07T12:29:28\",\"open\":\"2024-01-07T12:29:29\",\"timeMachine\":false,\"status\":\"ENDED\"},\"api\":[{\"name\":\"watching\",\"path\":\"https://apis.naver.com/neonplayer/olive-stat/1.0/lives/4167856/watchingCp?cc=US\"},{\"name\":\"waiting\",\"path\":\"https://apis.naver.com/neonplayer/olive-stat/1.0/lives/4167856/waiting\"},{\"name\":\"p2p-config\",\"path\":\"https://apis.naver.com/livecloud/livecloud/xray/p2p/v1/config/chzzk\"},{\"name\":\"qoeConfig\",\"path\":\"https://apis.naver.com/policy/policy/policy\"}],\"media\":[],\"thumbnail\":{\"snapshotThumbnailTemplate\":\"https://livecloud-thumb.akamaized.net/qa/livecloud/KR/stream/26446748/live/4167856/record/24293076/thumbnail/image_{type}.jpg\",\"timeMachineThumbnailTemplate\":\"https://livecloud-thumb.akamaized.net/qa/livecloud/KR/stream/26446748/live/4167856/record/24293076/thumbnail/image_{type}_{seq}.jpg\",\"types\":[\"1080\",\"720\",\"480\",\"360\",\"270\",\"144\"]},\"multiview\":[]}",
+  "chatAvailableGroup": "ALL",
+  "defaultThumbnailImageUrl": null,
+  "liveCategoryValue": "스펠렁키 2",
+  "liveId": 4167856,
+  "chatAvailableCondition": "NONE",
+  "closeDate": "2024-01-08 00:08:29",
+  "categoryType": "GAME",
+  "minFollowerMinute": 0,
+  "chatActive": true,
+  "livePollingStatusJson": "{\"status\": \"STARTED\", \"isPublishing\": true, \"playableStatus\": \"PLAYABLE\", \"trafficThrottling\": -1, \"callPeriodMilliSecond\": 10000}",
+  "liveImageUrl": "https://livecloud-thumb.akamaized.net/chzzk/livecloud/KR/stream/26446748/live/4167856/record/24293076/thumbnail/image_{type}.jpg",
+  "paidPromotion": false,
+  "accumulateCount": 79338,
+  "openDate": "2024-01-07 12:29:28",
+  "adult": false,
+  "liveCategory": "Spelunky2",
+  "concurrentUserCount": 3343,
+  "chatChannelId": "N13EFY",
+  "status": "CLOSE"
+}

@@ -18,6 +18,8 @@
 /* comment remover regex */
 /*                 \/\*[\s\S]*?\*\/|(?<=[^:])\/\/.*|^\/\/.*              */
 
+
+
 let source = "https://pub-945ee597288a43329a299345ecb0188d.r2.dev", query = "";
 
 GM_addStyle(`
@@ -90,7 +92,9 @@ GM_addStyle(`
         border-right: none;
     }
     .menuBtn.selected {
-        box-shadow: none;
+        box-shadow: 0 0 8px -1px #d1d3d8;
+        z-index: 30;
+        background-color: white;
     }
     .menuBtn > img {
         width: 45px;
