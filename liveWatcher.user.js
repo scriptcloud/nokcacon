@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         GMnot
-// @namespace    http://tampermonkey.net/
-// @version      0.21
-// @description  try to take over th
+// @name         녹라이브
+// @namespace    https://github.com/ghj7211/
+// @version      1.0.0
+// @description  녹카콘의 모듈. 방송이 시작하면 녹두로카페 메뉴에 방송 여부와 함께 방송 시간을 표시합니다. 녹두로월드 새 영상 업로드도 표시되며, 마우스를 올리면 썸네일과 영상 제목, 업로드 시간 등을 볼 수 있습니다.
 // @author       Yu
 // @match        https://cafe.naver.com/nokduro*
 // @grant        GM_addStyle

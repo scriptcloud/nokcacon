@@ -1,22 +1,24 @@
 // ==UserScript==
-// @name         nokcacon_test
-// @namespace    https://github.com/scriptcloud/
-// @version      0
-// @description  test
+// @name         녹카콘
+// @namespace    https://github.com/ghj7211/
+// @version      2.0.1
+// @description  녹두로 카페 전용 댓글 이모티콘 확장프로그램 녹카-콘. 댓글 이모티콘 입력, 추천버튼 모양 변경, 방송 알림 및 업타임 표시 기능을 지원합니다.
 // @author       pperero
+// @updateURL    https://gist.github.com/scriptcloud/6bd15f131566fdc15aaef6b0f7914b9d/raw/nokcacon.user.js
+// @downloadURL  https://gist.github.com/scriptcloud/6bd15f131566fdc15aaef6b0f7914b9d/raw/nokcacon.user.js
 // @match        https://cafe.naver.com/ArticleRead.nhn*
 // @match        https://cafe.naver.com/ca-fe/ArticleRead.nhn*
 // @match        https://cafe.naver.com/ca-fe/cafes*
 // @match        https://cafe.naver.com/nokduro*
-// @icon         https://pub-945ee597288a43329a299345ecb0188d.r2.dev/eggSungo.png
+// @icon         https://pub-945ee597288a43329a299345ecb0188d.r2.dev/sungo/half_egg.png
 // @grant        GM_addStyle
 // @grant        GM_notification
 // @require      https://code.jquery.com/jquery-2.1.4.min.js
 // @require      https://pub-945ee597288a43329a299345ecb0188d.r2.dev/all.min.js
 // ==/UserScript==
 
-/* comment remover regex */
-/*                 \/\*[\s\S]*?\*\/|(?<=[^:])\/\/.*|^\/\/.*              */
+//https://www.youtube.com/@nokclipmaker/playlists
+
 
 
 
@@ -291,11 +293,9 @@ async function Recommend() {
     if(optionLoad()) {
         enableLike();
         runUpdater(updater, this.oldLikeText);
-        console.log("updater run")
     } else {
         disableLike();
         stopUpdater(updater, this.oldLikeText);
-        console.log("updater stop")
     }
     ///////main logic end/////
 
@@ -322,14 +322,12 @@ async function Recommend() {
         button.append(`<i class='icon fas fa-arrows-rotate'></i>`);
         button.title = "추천버튼 활성화/비활성화"
         button.on("click", ()=> {
-            console.log("enabled: ", enabled);
             enabled ? disableLike() : enableLike(); //toggle
         });
         return button;
     }
 
     function enableLike() {
-        console.log("recommend enable!")
         $(likeToggleBtn).addClass("enabled");
         $(oldLikeDiv).addClass("enabled");
         $(likeDiv).addClass("enabled");
@@ -339,7 +337,6 @@ async function Recommend() {
     }
     
     function disableLike() {
-        console.log("recommend disable!")
         $(likeToggleBtn).removeClass("enabled");
         $(oldLikeDiv).removeClass("enabled");
         $(likeDiv).removeClass("enabled");
@@ -378,7 +375,7 @@ async function Recommend() {
         if(observer) {
             likers.text("좋아요"); //
             observer.disconnect();
-        } else console.log("observer is not running");
+        } else { }
     }
 }
 
@@ -593,8 +590,6 @@ class commentArea {
         //iconArea.appendChild(loadIcon);
 
         this.fileInput = await waitForElm("input.blind", this.area)
-        console.log("fileInput in CommentArea.init(): ", this.fileInput);
-        //console.log("inputBtn: ", fileInput);
         this.flagFileUpload();
     }
 
@@ -719,10 +714,8 @@ class MainScreen {
         const adIframe = await waitForElm("#cafe_sdk_tgtLREC");
         const idleThenHide = (event)=> {
             if (this.currentWriter && !$(event.target).hasClass("nokcacon")) { //녹카콘 클릭 로직과 겹치지 않게끔
-                //console.log("idelThenHide activated");
                 $(this.currentWriter.nokcacon).removeClass("active");
                 $(this.currentWriter.nokcacon.firstChild).attr("src", `${source}/sungo/egg.png${query}`);
-                //console.log("this: ", this);
                 this.hide(); //this는 lexical context에 따라 mainScreen에 바인딩
             }
         };
@@ -754,40 +747,139 @@ class MainScreen {
 }
 
 
+////////recommend//////////
+const color = `#e1fcd7`;
+
+GM_addStyle(`
+
+    #menuLink10:has(.live) {
+        background-color: ${color};
+        border-radius: 10px;
+        box-shadow: 0 0 10px 5px ${color}cc;
+    }
+
+    .live-icon {
+        margin-bottom: 2px;
+        margin-left: 5px;
+
+        display: inline-block;
+        background: linear-gradient(to right, #ff6e54, #ff4947); /* Gradient background */
+        border-radius: 8px; /* Slightly softer edges */
+        height: 16px; /* Slightly larger size */
+        width: 35px;
+
+        font-size: 12px; /* Increased font size */
+        letter-spacing: 0.5px;
+        color: #fff;
+
+        text-align: center;
+        line-height: 16px;
+        vertical-align: middle;
+
+        font-weight: bold; /* Bolder text */
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25); /* Subtle text shadow */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); /* Subtle shadow */
+
+        /* Alternative animation: Pulsing effect */
+        animation: pulse 1.5s infinite ease-in-out alternate;
+        animation-delay: 0.5s;
+
+        &:hover {
+            opacity: 80%;
+        }
+
+        &:not(.live) {
+            display: none;
+        }
+    }
+
+    @keyframes pulse {
+        from { transform: scale(1); }
+        to { transform: scale(1.1); }
+    }
+
+`);
+
+function LiveCheck() {
+    this.prevStatus = undefined;
+
+    this.check = async (liveElement) => {
+        const result = await fetch("https://asia-northeast3-nokcacon.cloudfunctions.net/getLatestData");
+        const livedata = await result.json();
+        const status = livedata.status;
+        const streamTitle = livedata.title;
+        
+        if(this.prevStatus === status) { // do nothing when status same. runs on initial visit (undefined -> open/close)
+        } else { //if (status === "OPEN" || status === "CLOSE") : exception when status is something else
+            if(status === "OPEN") {
+                $(liveElement).addClass("live"); // css 토글
+            } else if (status === "CLOSE") {
+                $(liveElement).removeClass("live");
+            }
+            if(this.prevStatus !== undefined // don't notify on initial visit
+               && Notification.permission === "granted") { // only when permission granted
+                let title = {
+                    "OPEN": "오방있 ㅇㅅㅇ",
+                    "CLOSE": "오늘은 여기까지. q2",
+                };
+                notify(title[status], streamTitle); 
+            }
+        }
+        this.prevStatus = status;
+    }
+}
+
+function notify(title, msg) {
+    const notification = new Notification(
+        title,
+        {
+            body: msg,
+            tag:  "live_alarm",
+            icon: "https://ssl.pstatic.net/static/nng/glive/icon/favicon.png"
+    });
+    setTimeout(notification.close.bind(notification), 60000); // 1min
+}
+
+
+
 //////////////////////////////////////////////////
-const asciiArt = `
-MMMMMMMMMMMMMMWNXKOxdolododxO0NWMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMWXK0KXXK0OOOkxdolloood0NMMMMMMMMMMMMMM
-MMMMMMMMMMMWNXNNXXXXKKKKK00KK00Odc;;o0WMMMMMMMMMMM
-MMMMMMMMMWWNNNXXXXXXKKKKKK000000OOxc..oXMMMMMMMMMM
-MMMMMMWWWNNXXXXXXXXXXXKK0000000OOOkkd,.;0WMMMMMMMM
-MMMMWNNNNXXXXXXKKXKKKK0000000OOOkxxkkxl'.:ONMMMMMM
-MMMWK0XXXXXXXXXXKKK000000Okddoodoodxxkkkd:,:xXMMMM
-MMM0xKXKKKKKKKKKK0000Odcccclc..;coddxkkkkkxc.'dXWM
-MMNddK0000000000000Oxl:;,,,,c:..:oddxkkkkkkkd,.'ck
-MMXloOOO0000000OOOOd::'     ,,':lddxkkkkkkOO0kdo;.
-MMK:cOxxOOOOOOOOkkk:'c:....',;cloddxkkkkkkOOO0O0ko
-MWk,,ccldOK0OOkkkkk:..:;,;;;:looddxkkkkkkOOOO00000
-M0,      .;cx0OkkkkdllooooooodddxxkkkkkOOOO0000000
-Nl ....     .'',ldxkkxxxxxxxxxxxkkkkOOOO0000000000
-O..:c;.          'lkkkkkkkkkkkkkkkkOO0000000000000
-d.,dc.         .;dkkkkkkkkkkkkkkkOO0000000000000K0
-k.';.        .:dkkkkkkkkkkkkkkkOOO000000000KKKKKKK
-K;         .cxkkkkkkkkkkkkkkkkO0000000KKKKKKKXXXXX
-Wx.       ;dkkkkkkkkkkkkkkkOOO00000KKKXXXXXXXXXXXX
-MWo.  .' .oOkkkkkkkkkkkkkkOO00000KKKXXXXXXXXXXXXXX
-MMNd':0d..dOkkkkkkkkkkkkOOO0000KKKXXXXXXXXXXXXXXXX
-MMMWXNWd ,kOOOkOkOOOOkOOO00KKKKKXXXXXXXXXXXXXXXXXX
-MMMMMMMO.'k0O00O00000000KKKKKXKXX Main Page! XKKKK
-MMMMMMMN:.dK00K000000KKKKXXXXXXXXXXXXXXXXXXXXXKXXX
-MMMMMMMWo.,OKKKKKKKKKKXXXXXXXXXXXXXXXXXXXXKXXXKXNN
-`;
+
 ////////　BODY  //////////////////////////////////
 "use strict"; //use strict mode
 if (window.top === window.self) {
-    console.log(asciiArt);
-    console.log("인생과 코딩의 공통점: 변수가 많다.");
+    /////// liveWatcher.user.js ////////
+    if(!(Notification.permission === "granted") && !(Notification.permission === "denied")) {
+        alert("방송 알림을 받으려면 허용을 눌러주세요. 녹두로 카페가 열려있을 때 방송이 시작하면 1분 내로 알림을 받습니다. 설정에서 언제든지 끄고 켤 수 있습니다. 차단시 알림을 보내지 않습니다.")
+        Notification.requestPermission();
+        //비동기적으로 permisson 받고 필요할때 직접 접근해서 체크
+    }
+
+    const youtube = waitForElm("#menuLink20").then(youtube => youtube.innerHTML = `<i class="fa-brands fa-youtube" style="color:red; height: 1em;width: 1em;"></i>` + youtube.innerText.slice(2));
+
+    const streamContainer = waitForElm("#menuLink10").then(streamContainer => {
+        streamContainer.innerHTML = `<img src="https://ssl.pstatic.net/static/nng/glive/icon/favicon.png" style="width: auto; display: inline-block; height: 1em; width: 1em;vertical-align: text-top;"/>` + streamContainer.innerText.slice(2);
+
+        const liveElement = document.createElement("div");
+        liveElement.textContent = "live";
+        liveElement.className = "live-icon";
+        streamContainer.appendChild(liveElement)
+
+        const liveCheck = new LiveCheck();
+
+        liveCheck.check(liveElement); //
+        setInterval(()=>{
+            liveCheck.check(liveElement);
+        }, 60000);
+    });
+
+    const url = "https://chzzk.naver.com/live/6e06f5e1907f17eff543abd06cb62891/";
+    document.addEventListener("notificationclick", (event) => {
+        event.notification.close();
+        window.open(url, '_blank').focus();
+    });
 }
+
+
 //window.addEventListener("beforeunload", () => {});
 let domain = "cafe.naver.com/nokduro";
 
@@ -809,9 +901,7 @@ if (isUrlInDomain(parent.location.href, domain)) {
         const observer = new MutationObserver(function (mutations) {
             for (const mutation of mutations) { for (const node of mutation.addedNodes) {
                 if (node.nodeType === Node.ELEMENT_NODE) {
-                    console.log("new element: ", node);
                     if($(node).hasClass("CommentItem--reply")) {
-                        console.log("new commentWriter added: ", node.firstChild);
                         const writer = new commentArea(node.firstChild, mainScreen);
                         writer.init();
                     }

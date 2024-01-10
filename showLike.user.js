@@ -2,7 +2,7 @@
 // @name         녹하트
 // @namespace    http://www.github.com/ghj7211
 // @version      1.0.0
-// @description  녹두로 카페 게시글 목록에서 좋아요 수를 표시해 줍니다. 사용에 유의하세요
+// @description  녹두로 카페 게시글 목록에서 좋아요 수를 표시해 줍니다. 이용 및 배포에 유의하세요.
 // @author       pperero
 // @match        https://cafe.naver.com/MyCafeIntro.nhn?clubid=31103664
 // @match        https://cafe.naver.com/ArticleList.nhn?search.clubid=31103664&*

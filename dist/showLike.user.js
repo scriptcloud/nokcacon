@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         녹하트
-// @namespace    http://www.github.com/ghj7211
-// @version      1.0.1
-// @description  녹두로 카페 게시글 목록에서 좋아요 수를 표시해 줍니다. 사용에 유의하세요
+// @namespace    http://www.github.com/scriptcloud
+// @version      1.0.2
+// @description  녹두로 카페 게시글 목록에서 좋아요 수를 표시해 줍니다. 이용 및 배포에 유의하세요.
 // @author       pperero
-// @updateURL    https://github.com/scriptcloud/nokcacon/raw/main/dist/cafeLikeCounter.user.js
-// @downloadURL  https://github.com/scriptcloud/nokcacon/raw/main/dist/cafeLikeCounter.user.js
+// @updateURL    https://github.com/scriptcloud/nokcacon/raw/main/dist/showLike.user.js
+// @downloadURL  https://github.com/scriptcloud/nokcacon/raw/main/dist/showLike.user.js
 // @match        https://cafe.naver.com/MyCafeIntro.nhn?clubid=31103664
 // @match        https://cafe.naver.com/ArticleList.nhn?search.clubid=31103664&*
 // @match        https://cafe.naver.com/ca-fe/cafes/31103664*
@@ -76,7 +76,7 @@ function waitForElm(selector) { // vanilla js
 
 function waitForElements(selector) { // jQuery
   return new Promise((resolve, reject) => {
-    let elementCount = $(selector).length;
+    let elementCount = $(selector).length; // Check initial count
     if (elementCount > 0) {
       resolve($(selector)); // Resolve immediately if already found
       return; // Avoid unnecessary observer setup
@@ -96,14 +96,17 @@ function waitForElements(selector) { // jQuery
     const timeoutId = setTimeout(() => {
       observer.disconnect();
       reject(new Error("Elements not found"));
-    }, 5000);
+    }, 5000); // Set your desired timeout duration (in milliseconds)
   });
 }
 
 
 function LikeShower(where) {
   this.where = where;
+  console.log("where: ", this.where);
+
   this.init = async function () {
+    console.log("init start");
     await waitForElm("div.board-list .inner_list");
     $("div.board-list .inner_list").each((idx, article) => {
       const likeNumberIcon = $("<span/>")
@@ -153,6 +156,8 @@ function LikeShower(where) {
     var match = path.match(regex);
     if (match) {
       var id = match[1];
+    } else {
+      console.log("ID not found in the path.");
     }
     return id;
   };
@@ -161,22 +166,24 @@ function LikeShower(where) {
 //// Main Body ////
 ///if (window.location.href === "https://cafe.naver.com/MyCafeIntro.nhn?clubid=31103664" || window.location.href.includes("https://cafe.naver.com/ArticleList.nhn?search.clubid=31103664&")) {
 
-async function pageManager() {
+(async function pageManager() {
   this.observer = undefined;
   this.monitorPageChange = function () {
+    console.log("monitoring page change in current tab");
     this.observer?.disconnect();
     setTimeout(async () => {
       const target = waitForElm(".article-board table tbody"); //promise
       const config = { childList: true };
       const callback = function (mutationsList, observer) {
+        console.log("mutated");
         likeShower.init();
         likeShower.update();
       };
       this.observer = new MutationObserver(callback);
       this.observer.observe(await target, config);
-    }, 1000);
+      console.log("button clicked, observer: ", this.observer);
+    }, 1000); //버튼 클릭 후 글목록 업데이트를 1초간 기다렸다 실행
   };
-
   //execution
   let likeShower;
   if (location.href.includes("https://cafe.naver.com/ca-fe/cafes/31103664/popular")) {
@@ -187,10 +194,9 @@ async function pageManager() {
       this.monitorPageChange();
     });
   } else {
+    console.log("MyCafeIntro");
     likeShower = new LikeShower();
   }
   likeShower.init();
   likeShower.update();
-}
-
-pageManager();
+})();
