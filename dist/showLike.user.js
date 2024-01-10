@@ -103,10 +103,8 @@ function waitForElements(selector) { // jQuery
 
 function LikeShower(where) {
   this.where = where;
-  console.log("where: ", this.where);
 
   this.init = async function () {
-    console.log("init start");
     await waitForElm("div.board-list .inner_list");
     $("div.board-list .inner_list").each((idx, article) => {
       const likeNumberIcon = $("<span/>")
@@ -157,7 +155,6 @@ function LikeShower(where) {
     if (match) {
       var id = match[1];
     } else {
-      console.log("ID not found in the path.");
     }
     return id;
   };
@@ -169,19 +166,16 @@ function LikeShower(where) {
 (async function pageManager() {
   this.observer = undefined;
   this.monitorPageChange = function () {
-    console.log("monitoring page change in current tab");
     this.observer?.disconnect();
     setTimeout(async () => {
       const target = waitForElm(".article-board table tbody"); //promise
       const config = { childList: true };
       const callback = function (mutationsList, observer) {
-        console.log("mutated");
         likeShower.init();
         likeShower.update();
       };
       this.observer = new MutationObserver(callback);
       this.observer.observe(await target, config);
-      console.log("button clicked, observer: ", this.observer);
     }, 1000); //버튼 클릭 후 글목록 업데이트를 1초간 기다렸다 실행
   };
   //execution
@@ -194,7 +188,6 @@ function LikeShower(where) {
       this.monitorPageChange();
     });
   } else {
-    console.log("MyCafeIntro");
     likeShower = new LikeShower();
   }
   likeShower.init();
