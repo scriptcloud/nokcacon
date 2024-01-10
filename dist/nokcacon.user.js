@@ -17,10 +17,6 @@
 // @require      https://pub-945ee597288a43329a299345ecb0188d.r2.dev/all.min.js
 // ==/UserScript==
 
-//https://www.youtube.com/@nokclipmaker/playlists
-
-
-
 
 let source = "https://pub-945ee597288a43329a299345ecb0188d.r2.dev", query = "";
 
@@ -102,8 +98,6 @@ GM_addStyle(`
         width: 45px;
     }
 
-
-
     .conView {
         flex-grow: 1;
         width: 100%;
@@ -177,7 +171,6 @@ GM_addStyle(`
         padding: 6px 8px;
         box-sizing: border-box;
 
-
         font-size: 14px;
         font-weight: 400;
         text-align: center;
@@ -216,10 +209,7 @@ GM_addStyle(`
         }
     }
 
-
 `);
-
-/////  UTILITY FUNCTIONS  //////////////////////////////////////////////
 
 function createCorsElement(type) {
     const elem = document.createElement(type);
@@ -228,8 +218,7 @@ function createCorsElement(type) {
 }
 
 function waitForElm(selector, where = document.body) {
-    //you need to get the selector in the form "where > selector"
-    //if you want to search from inside element subtree
+
     return new Promise(resolve => {
         const localElem = $(where).find(selector)[0];
         if (localElem) {
@@ -258,36 +247,31 @@ function isUrlInDomain (url, domain) {
     url.startsWith(`http://${domain}`);
 }
 
-
-/////  MAIN FUNCTIONS  /////////////////////////////////////////////////
-
 async function Recommend() {
 
-    //변수초기화
-    const oldLikeDiv = await waitForElm("div.like_article"); //기존 추천버튼이 있는 div
+    const oldLikeDiv = await waitForElm("div.like_article"); 
     const [oldLikeBtn, myLikeInfo] = await Promise.all([
         waitForElm(".u_ico"),
-        waitForElm("a.u_likeit_list_btn") //my like status
+        waitForElm("a.u_likeit_list_btn") 
     ]);
-    this.oldLikeText = $(oldLikeBtn).next(); //좋아요(누르면 좋아요한 사람 목록)
-    //추천버튼 생성
+    this.oldLikeText = $(oldLikeBtn).next(); 
+    
     const likeBtn = newLikeBtn();
     likeBtn.on("click", ()=>{
         $(oldLikeBtn).click();
     });
-    //추천버튼 div 생성
+    
     const likeDiv= $("<div>").addClass("article_end").append(likeBtn);
     waitForElm('.article_viewer').then(element=>{
         $(element).after(likeDiv);
     });
-    //토글버튼
+    
     const likeToggleBtn = newToggleBtn();
-    //append to first child
+    
     likeToggleBtn.prependTo(("div.ArticleTool"));
-    // localstorage에서 추천버튼 활성화 여부 불러오기
+    
     let enabled = null;
 
-    //observer 선언
     const updater = setUpdater(this.oldLikeText);
     const option = new Option();
     if(optionLoad()) {
@@ -297,11 +281,9 @@ async function Recommend() {
         disableLike();
         stopUpdater(updater, this.oldLikeText);
     }
-    ///////main logic end/////
 
-    ///////  methods  ////////
     function optionLoad() {
-        // null이면 true 반환
+        
         return localStorage.getItem('recommend') === 'false' ? false : true;
     }
     function optionSave() {
@@ -322,7 +304,7 @@ async function Recommend() {
         button.append(`<i class='icon fas fa-arrows-rotate'></i>`);
         button.title = "추천버튼 활성화/비활성화"
         button.on("click", ()=> {
-            enabled ? disableLike() : enableLike(); //toggle
+            enabled ? disableLike() : enableLike(); 
         });
         return button;
     }
@@ -345,26 +327,24 @@ async function Recommend() {
         optionSave();
     }
 
-    //observer
     function setUpdater(likers) {
-        //로딩순서 realLikeBtn -> Button -> Updater
-        //observer가 지켜볼 elements
+
         const count = likers.next();
         const counter = likeBtn.find("span.count");
-        //실시간 추천수 업데이트 및 글자 강제변경. visibility는 css에서 처리
+        
         const observer = new MutationObserver(mutations => {
-            //$(realLikeBtn).hide();
+            
             if(likers.text() === "좋아요") {
-                likers.text("추천수");} //글자 강제변경
-            counter.text(count.text()); //추천수 실시간 갱신
+                likers.text("추천수");} 
+            counter.text(count.text()); 
             $(myLikeInfo).hasClass("on") ?
-                likeBtn.addClass("on") : likeBtn.removeClass("on"); //내 추천여부 반영
+                likeBtn.addClass("on") : likeBtn.removeClass("on"); 
         });
         return observer;
     }
 
     function runUpdater(observer, likers) {
-        likers.text("추천수"); //
+        likers.text("추천수"); 
         observer.observe(oldLikeDiv, {
             childList: true,
             subtree: true
@@ -373,7 +353,7 @@ async function Recommend() {
 
     function stopUpdater(observer, likers) {
         if(observer) {
-            likers.text("좋아요"); //
+            likers.text("좋아요"); 
             observer.disconnect();
         } else { }
     }
@@ -413,7 +393,6 @@ function getMainScreen() {
         const gif = menuBtn.dataset.gif = data.gif;
 
         menuBtn.title = name;
-         
 
         if (png + gif == 0) menuBtn.textContent = name;
         const extension = png ? "png" : (gif ? "gif" : false);
@@ -424,9 +403,7 @@ function getMainScreen() {
             thumbnail.setAttribute("draggable", false);
             menuBtn.appendChild(thumbnail);
         }
-        
-        //각각의 conlist를 만들어서 저장
-        //홈 메뉴는 nokConut으로 시작
+
         const conList = makeConList(menuBtn);
         conView.append(conList);
         if(conType === 'nokConut') {
@@ -436,10 +413,9 @@ function getMainScreen() {
         menuList.append(menuBtn);
     }
 
-    //event delegation on menuView for menuBtn click event
-    menuView.on("click", ".menuBtn", function() { //function()이므로 this는 menuBtn(target element)
+    menuView.on("click", ".menuBtn", function() { 
         menuList.children().removeClass('selected');
-        $(this).addClass('selected'); //this만 명시적으로 jquery로 변환
+        $(this).addClass('selected'); 
         conView.children().removeClass('selected');
         const conList = conView.find(`.${this.dataset.conType}`);
         conList.addClass('selected');
@@ -449,9 +425,8 @@ function getMainScreen() {
 
     enableDragScroll(menuView);
 
-    return mainscreen[0]; //미봉책
+    return mainscreen[0]; 
 }
-
 
 function makeConList(menu) {
     const conType = menu.dataset.conType;
@@ -495,7 +470,6 @@ function makeConList(menu) {
             conbutton.appendChild(conimage);
             conlist.append(conbutton);
 
-            //save src data to conbutton
             conbutton.dataset.src = conimage.src;
         }
     }
@@ -503,13 +477,11 @@ function makeConList(menu) {
     return conlist;
 }
 
-//method for mainScreen
 function enableDragScroll(slider) {
     let isDown = false;
     let startX;
     let scrollLeft;
 
-    //임시방편
     slider = slider[0];
 
     slider.addEventListener('mousedown', e => {
@@ -539,8 +511,6 @@ function enableDragScroll(slider) {
     });
 }
 
-
-
 class commentArea {
     constructor (writer, mainScreen) {
         this.screenAnchor = null;
@@ -549,45 +519,39 @@ class commentArea {
 
         this.area = writer;
         this.nokcacon = this.Nokcacon();
-        //loadIcon = loadIcon();
 
-        //event delegation: nokcacon click
-        $(this.area).on("click", ".nokcacon", (e)=> { //화살표함수이므로 this는 commentArea
-            const currentNcc = mainScreen.currentWriter?.nokcacon; //?.: optional 
-            if(!currentNcc) mainScreen.currentWriter = this; //첫 클릭시 currentWriter 초기화
+        $(this.area).on("click", ".nokcacon", (e)=> { 
+            const currentNcc = mainScreen.currentWriter?.nokcacon; 
+            if(!currentNcc) mainScreen.currentWriter = this; 
 
-            // nokcacon.active와 writeSpace 변화에 따른 4분기
-            // nokcacon을 객체화해서 정적 메소드로 utility function 제공
-            // active 설정과 src 변경을 한데 묶어 nokcacon.activate/inactivate()로 바꿀것
-            if (currentNcc === this.nokcacon) { //동일 녹카콘 다시 클릭시(첫 클릭시도 포함)
-                if ($(currentNcc).hasClass("active")) { //현재 active이면
+            if (currentNcc === this.nokcacon) { 
+                if ($(currentNcc).hasClass("active")) { 
                     mainScreen.hide();
                     $(currentNcc).removeClass("active");
-                    $(currentNcc).children().attr("src", `${source}/sungo/egg.png${query}`); //bird.png
-                } else { //현재 active가 아니면
+                    $(currentNcc).children().attr("src", `${source}/sungo/egg.png${query}`); 
+                } else { 
                     mainScreen.show();
                     $(currentNcc).addClass("active");
-                    $(currentNcc).children().attr("src", `${source}/sungo/bird.png${query}`); //bird.png
+                    $(currentNcc).children().attr("src", `${source}/sungo/bird.png${query}`); 
                 }
-            } else { //다른 녹카콘 클릭시
-                //mainScreen.moveto(this.screenAnchor); //magnet <- original location
+            } else { 
+                
                 mainScreen.currentWriter = this;
                 if (!$(currentNcc).hasClass("active"))  mainScreen.show();
 
                 $(currentNcc).removeClass("active");
-                $(currentNcc).children().attr("src", `${source}/sungo/egg.png${query}`); //bird.png
+                $(currentNcc).children().attr("src", `${source}/sungo/egg.png${query}`); 
                 $(e.currentTarget).addClass("active");
                 $(e.currentTarget).children().attr("src", `${source}/sungo/bird.png${query}`);
             }
-            mainScreen.moveto(this.screenAnchor); //일단 모든 케이스에 대해 적용
+            mainScreen.moveto(this.screenAnchor); 
         });
     }
 
-    async init() { //iconArea와 fileInput을 설정함
+    async init() { 
         this.screenAnchor = await waitForElm("div.comment_attach", this.area)
         this.iconArea = await waitForElm("div.attach_box", this.screenAnchor)
         this.iconArea.appendChild(this.nokcacon);
-        //iconArea.appendChild(loadIcon);
 
         this.fileInput = await waitForElm("input.blind", this.area)
         this.flagFileUpload();
@@ -602,8 +566,7 @@ class commentArea {
         inputBtn.dispatchEvent(new Event("change"))
     }
 
-
-    flagFileUpload () { //:HTMLElement
+    flagFileUpload () { 
         const inputBtn = this.fileInput;
         let flagger = inputBtn.onclick;
         inputBtn.onclick = (e)=>{
@@ -621,14 +584,12 @@ class commentArea {
 
         const imageElement = createCorsElement("img");
         imageElement.src = `${source}/sungo/egg.png${query}`;
-        //imageElement.src = `${source}/sungo/egg.png${query}`;
-        //default image: egg.png, hover image: half_egg.png, change to bird.png when selected and if unselected it should get back to egg.png
-        //hover behavior
-        $(nccButton).on('mouseenter', function() { //여기서의 this는 hover된 element인 nccButton을 의미함
-            if ($(this).hasClass("active")) { return; } //active이면 무시하고 bird.png
+
+        $(nccButton).on('mouseenter', function() { 
+            if ($(this).hasClass("active")) { return; } 
             $(imageElement).attr("src", `${source}/sungo/half_egg.png${query}`);
-        }).on('mouseleave', function() { //idle
-            if ($(this).hasClass("active")) { return; } //active이면 무시하고 bird.png
+        }).on('mouseleave', function() { 
+            if ($(this).hasClass("active")) { return; } 
             $(imageElement).attr("src", `${source}/sungo/egg.png${query}`);
         });
 
@@ -645,7 +606,7 @@ class commentArea {
     }
     
     loadIcon() {
-        //show loading when file uploading
+        
         const loadIcon = new loadIconControl();
         container.appendChild(loadIcon.icon);
         fileInput.addEventListener("click", async function() {
@@ -657,7 +618,6 @@ class commentArea {
     }
 }
 
-
 class MainScreen {
     constructor() {
         this.screen = getMainScreen();
@@ -667,32 +627,27 @@ class MainScreen {
         $("body").append(this.screen);
         this.hideOnClickOutside();
 
-        //event delegation for conBtn click
         $(this.screen).on("click", ".conBtn", async (e) => {
-            const src = e.currentTarget.dataset.src; //event.target: conBtn을 이용해 접근
+            const src = e.currentTarget.dataset.src; 
             const extension = src.split(".").pop();
 
             const rawfile = await fetch(src);
             const blob = await rawfile.blob();
 
             const file = new File([blob], `con.${extension}`, { type: `image/${extension}` });
-            this.uploadOn(file); //this 바인딩 고려
+            this.uploadOn(file); 
 
-            //escape sungo mode - 스크린을 hide하는 동시에 
-            //현재 writer의 nokcacon을 unactive로 만들고
-            //sungo icon을 egg.png로 바꾸는 함수 필요
             $(this.screen).hide();
             $(this.currentWriter.nokcacon).removeClass("active");
             $(this.currentWriter.nokcacon.firstChild).attr("src", `${source}/sungo/egg.png${query}`);
         });
     }
     
-    uploadOn(file) { //commentArea
+    uploadOn(file) { 
         this.currentWriter.uploadFile(file);
     }
 
-    //screen position left bottom (main commentWriter iconbox)
-    moveto(element) { //:jQuery element
+    moveto(element) { 
         $(this.screen).css({
             left: `${$(element).offset().left}px`,
             top: `${$(element).offset().top + $(element).outerHeight()}px`
@@ -710,13 +665,13 @@ class MainScreen {
     }
 
     async hideOnClickOutside() {
-        //click advertisement iframe
+        
         const adIframe = await waitForElm("#cafe_sdk_tgtLREC");
         const idleThenHide = (event)=> {
-            if (this.currentWriter && !$(event.target).hasClass("nokcacon")) { //녹카콘 클릭 로직과 겹치지 않게끔
+            if (this.currentWriter && !$(event.target).hasClass("nokcacon")) { 
                 $(this.currentWriter.nokcacon).removeClass("active");
                 $(this.currentWriter.nokcacon.firstChild).attr("src", `${source}/sungo/egg.png${query}`);
-                this.hide(); //this는 lexical context에 따라 mainScreen에 바인딩
+                this.hide(); 
             }
         };
         const self = this;
@@ -725,12 +680,12 @@ class MainScreen {
                 idleThenHide(event);
             });
         }
-        //click outside of iframe
+        
         const outerDocument = window.parent.document;
         $(outerDocument).on('mousedown', (event)=> {
             idleThenHide(event);
         });
-        //click in iframe but outside of element
+        
         $(document).on('click', (event) => {
             const click1= event.target.closest(".mainScreen");
             const click2 = event.target.closest("div.CommentWriter");
@@ -738,7 +693,7 @@ class MainScreen {
                 idleThenHide(event);
             }
         });
-        //if register button clicked
+        
         const regBtn = document.querySelector(".register_box");
         $(regBtn).on('click', (event) => {
             idleThenHide(event);
@@ -746,8 +701,6 @@ class MainScreen {
     } 
 }
 
-
-////////recommend//////////
 const color = `#e1fcd7`;
 
 GM_addStyle(`
@@ -763,12 +716,12 @@ GM_addStyle(`
         margin-left: 5px;
 
         display: inline-block;
-        background: linear-gradient(to right, #ff6e54, #ff4947); /* Gradient background */
-        border-radius: 8px; /* Slightly softer edges */
-        height: 16px; /* Slightly larger size */
+        background: linear-gradient(to right, #ff6e54, #ff4947); 
+        border-radius: 8px; 
+        height: 16px; 
         width: 35px;
 
-        font-size: 12px; /* Increased font size */
+        font-size: 12px; 
         letter-spacing: 0.5px;
         color: #fff;
 
@@ -776,11 +729,10 @@ GM_addStyle(`
         line-height: 16px;
         vertical-align: middle;
 
-        font-weight: bold; /* Bolder text */
-        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25); /* Subtle text shadow */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); /* Subtle shadow */
+        font-weight: bold; 
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25); 
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); 
 
-        /* Alternative animation: Pulsing effect */
         animation: pulse 1.5s infinite ease-in-out alternate;
         animation-delay: 0.5s;
 
@@ -809,15 +761,15 @@ function LiveCheck() {
         const status = livedata.status;
         const streamTitle = livedata.title;
         
-        if(this.prevStatus === status) { // do nothing when status same. runs on initial visit (undefined -> open/close)
-        } else { //if (status === "OPEN" || status === "CLOSE") : exception when status is something else
+        if(this.prevStatus === status) { 
+        } else { 
             if(status === "OPEN") {
-                $(liveElement).addClass("live"); // css 토글
+                $(liveElement).addClass("live"); 
             } else if (status === "CLOSE") {
                 $(liveElement).removeClass("live");
             }
-            if(this.prevStatus !== undefined // don't notify on initial visit
-               && Notification.permission === "granted") { // only when permission granted
+            if(this.prevStatus !== undefined 
+               && Notification.permission === "granted") { 
                 let title = {
                     "OPEN": "오방있 ㅇㅅㅇ",
                     "CLOSE": "오늘은 여기까지. q2",
@@ -837,21 +789,16 @@ function notify(title, msg) {
             tag:  "live_alarm",
             icon: "https://ssl.pstatic.net/static/nng/glive/icon/favicon.png"
     });
-    setTimeout(notification.close.bind(notification), 60000); // 1min
+    setTimeout(notification.close.bind(notification), 60000); 
 }
 
-
-
-//////////////////////////////////////////////////
-
-////////　BODY  //////////////////////////////////
-"use strict"; //use strict mode
+"use strict"; 
 if (window.top === window.self) {
-    /////// liveWatcher.user.js ////////
+    
     if(!(Notification.permission === "granted") && !(Notification.permission === "denied")) {
         alert("방송 알림을 받으려면 허용을 눌러주세요. 녹두로 카페가 열려있을 때 방송이 시작하면 1분 내로 알림을 받습니다. 설정에서 언제든지 끄고 켤 수 있습니다. 차단시 알림을 보내지 않습니다.")
         Notification.requestPermission();
-        //비동기적으로 permisson 받고 필요할때 직접 접근해서 체크
+        
     }
 
     const youtube = waitForElm("#menuLink20").then(youtube => youtube.innerHTML = `<i class="fa-brands fa-youtube" style="color:red; height: 1em;width: 1em;"></i>` + youtube.innerText.slice(2));
@@ -866,7 +813,7 @@ if (window.top === window.self) {
 
         const liveCheck = new LiveCheck();
 
-        liveCheck.check(liveElement); //
+        liveCheck.check(liveElement); 
         setInterval(()=>{
             liveCheck.check(liveElement);
         }, 60000);
@@ -879,25 +826,21 @@ if (window.top === window.self) {
     });
 }
 
-
-//window.addEventListener("beforeunload", () => {});
 let domain = "cafe.naver.com/nokduro";
 
 if (isUrlInDomain(parent.location.href, domain)) {
-    //추천버튼 활성화
+    
     Recommend();
 
-    const mainScreen = new MainScreen; ///콘 메뉴 추가
+    const mainScreen = new MainScreen; 
 
-    //create commentArea object for main commentWriter
     waitForElm("div.CommentWriter").then(async writerbox => {
         const writer = new commentArea(writerbox, mainScreen);
         await writer.init();
-        //동기적 처리를 위해 로직을 constructor에서 async init()으로 이동
-        //콜백을 async로 설정하면 내부에서 await으로 처리 가능
+
     }).then(async ()=>{
         const commentList = await waitForElm("ul.comment_list");
-        //create commentArea object for new commentWriters
+        
         const observer = new MutationObserver(function (mutations) {
             for (const mutation of mutations) { for (const node of mutation.addedNodes) {
                 if (node.nodeType === Node.ELEMENT_NODE) {

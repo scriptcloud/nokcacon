@@ -1,9 +1,11 @@
 // ==UserScript==
 // @name         녹하트
-// @namespace    http://www.github.com/ghj7211
-// @version      1.0.0
+// @namespace    http://www.github.com/scriptcloud
+// @version      1.0.5
 // @description  녹두로 카페 게시글 목록에서 좋아요 수를 표시해 줍니다. 이용 및 배포에 유의하세요.
 // @author       pperero
+// @updateURL    https://github.com/scriptcloud/nokcacon/raw/main/dist/showLike.user.js
+// @downloadURL  https://github.com/scriptcloud/nokcacon/raw/main/dist/showLike.user.js
 // @match        https://cafe.naver.com/MyCafeIntro.nhn?clubid=31103664
 // @match        https://cafe.naver.com/ArticleList.nhn?search.clubid=31103664&*
 // @match        https://cafe.naver.com/ca-fe/cafes/31103664*
@@ -162,7 +164,10 @@ function LikeShower(where) {
 }
 
 //// Main Body ////
-///if (window.location.href === "https://cafe.naver.com/MyCafeIntro.nhn?clubid=31103664" || window.location.href.includes("https://cafe.naver.com/ArticleList.nhn?search.clubid=31103664&")) {
+// "https://cafe.naver.com/MyCafeIntro.nhn?clubid=31103664" 타이틀화면
+// "https://cafe.naver.com/ArticleList.nhn?search.clubid=31103664&" 글목록
+// "https://cafe.naver.com/ca-fe/cafes/31103664/popular" 인기글
+// 내가쓴글, 이미지글 추천수기능 필요
 
 (async function pageManager() {
   this.observer = undefined;
@@ -185,6 +190,7 @@ function LikeShower(where) {
   //execution
   let likeShower;
   if (location.href.includes("https://cafe.naver.com/ca-fe/cafes/31103664/popular")) {
+    //인기글인 경우
     likeShower = new LikeShower("popular");
     this.monitorPageChange();
     // tab change

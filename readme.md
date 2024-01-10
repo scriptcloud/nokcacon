@@ -1,3 +1,3 @@
-nokcacon_test page
+녹카콘 tampermonkey extension
 =============
-Hello World!
+녹카콘의 tampermonkey 코드 및 배포판입니다.

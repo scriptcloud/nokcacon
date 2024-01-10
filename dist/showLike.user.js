@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         녹하트
 // @namespace    http://www.github.com/scriptcloud
-// @version      1.0.2
+// @version      1.0.5
 // @description  녹두로 카페 게시글 목록에서 좋아요 수를 표시해 줍니다. 이용 및 배포에 유의하세요.
 // @author       pperero
 // @updateURL    https://github.com/scriptcloud/nokcacon/raw/main/dist/showLike.user.js
@@ -13,6 +13,7 @@
 // @run-at       document-end
 // @require      https://code.jquery.com/jquery-2.1.4.min.js
 // ==/UserScript==
+
 
 GM_addStyle(`
 
@@ -56,7 +57,7 @@ GM_addStyle(`
     }
 
   `);
-function waitForElm(selector) { // vanilla js
+function waitForElm(selector) { 
   return new Promise((resolve) => {
     if (document.querySelector(selector)) {
       return resolve(document.querySelector(selector));
@@ -74,32 +75,31 @@ function waitForElm(selector) { // vanilla js
   });
 }
 
-function waitForElements(selector) { // jQuery
+function waitForElements(selector) { 
   return new Promise((resolve, reject) => {
-    let elementCount = $(selector).length; // Check initial count
+    let elementCount = $(selector).length; 
     if (elementCount > 0) {
-      resolve($(selector)); // Resolve immediately if already found
-      return; // Avoid unnecessary observer setup
+      resolve($(selector)); 
+      return; 
     }
     const observer = new MutationObserver(() => {
       const elements = $(selector);
       if (elements.length > 0) {
-        observer.disconnect(); // Stop observing changes
-        resolve(elements); // Resolve the promise with the elements
+        observer.disconnect(); 
+        resolve(elements); 
       }
     });
     observer.observe(document.body, {
         childList: true,
         subtree: true,
         });
-    // Set a timeout in case elements take too long to appear
+    
     const timeoutId = setTimeout(() => {
       observer.disconnect();
       reject(new Error("Elements not found"));
-    }, 5000); // Set your desired timeout duration (in milliseconds)
+    }, 5000); 
   });
 }
-
 
 function LikeShower(where) {
   this.where = where;
@@ -109,7 +109,7 @@ function LikeShower(where) {
     $("div.board-list .inner_list").each((idx, article) => {
       const likeNumberIcon = $("<span/>")
         .addClass("likeNumberIcon")
-        .append(`<span></span>`); // ${value}
+        .append(`<span></span>`); 
       if ($(article).find(".list-i-new").length) {
         $(article).find(".list-i-new").before(likeNumberIcon);
       } else if ($(article).children("div.article_append").length) {
@@ -139,7 +139,7 @@ function LikeShower(where) {
       if (likeDict[articleId] && likeDict[articleId] > 0) {
         $(article).find(".likeNumberIcon").addClass("shown");
         if (likeDict[articleId] > 99) {
-          // 100개 이상은 99+로 표시
+          
           $(article).find(`.likeNumberIcon span`).text("99+");
           $(article).find(`.likeNumberIcon`).addClass("yellow");
         } else {
@@ -160,15 +160,12 @@ function LikeShower(where) {
   };
 }
 
-//// Main Body ////
-///if (window.location.href === "https://cafe.naver.com/MyCafeIntro.nhn?clubid=31103664" || window.location.href.includes("https://cafe.naver.com/ArticleList.nhn?search.clubid=31103664&")) {
-
 (async function pageManager() {
   this.observer = undefined;
   this.monitorPageChange = function () {
     this.observer?.disconnect();
     setTimeout(async () => {
-      const target = waitForElm(".article-board table tbody"); //promise
+      const target = waitForElm(".article-board table tbody"); 
       const config = { childList: true };
       const callback = function (mutationsList, observer) {
         likeShower.init();
@@ -176,15 +173,16 @@ function LikeShower(where) {
       };
       this.observer = new MutationObserver(callback);
       this.observer.observe(await target, config);
-    }, 1000); //버튼 클릭 후 글목록 업데이트를 1초간 기다렸다 실행
+    }, 1000); 
   };
-  //execution
+  
   let likeShower;
   if (location.href.includes("https://cafe.naver.com/ca-fe/cafes/31103664/popular")) {
+    
     likeShower = new LikeShower("popular");
     this.monitorPageChange();
-    // tab change
-    $(document).on("click", "button.tab_btn", async (e) => { //e와 this가 별개임을 명시
+    
+    $(document).on("click", "button.tab_btn", async (e) => { 
       this.monitorPageChange();
     });
   } else {
