@@ -3,7 +3,7 @@
 // @namespace    http://www.github.com/scriptcloud
 // @version      1.0.5
 // @description  녹두로 카페 게시글 목록에서 좋아요 수를 표시해 줍니다. 이용 및 배포에 유의하세요.
-// @author       pperero
+// @author       페레로
 // @updateURL    https://github.com/scriptcloud/nokcacon/raw/main/dist/showLike.user.js
 // @downloadURL  https://github.com/scriptcloud/nokcacon/raw/main/dist/showLike.user.js
 // @match        https://cafe.naver.com/MyCafeIntro.nhn?clubid=31103664
